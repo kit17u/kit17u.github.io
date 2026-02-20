@@ -1,4 +1,5 @@
 import * as THREE from 'https://unpkg.com/three@0.182.0/build/three.module.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.182.0/examples/jsm/loaders/GLTFLoader.js';
 
 import { MouseController } from './mouseController.js';
 import { FishController } from './fishController.js';
@@ -60,7 +61,7 @@ async function init(){
 }
 
 function spawnFish(num, maxDistance, urls){
-    const gltfLoader = new THREE.GLTFLoader();
+    const gltfLoader = new GLTFLoader();
     
     for(let i=0; i<num; i++){
         const url = urls[Math.floor(Math.random()*urls.length)];
