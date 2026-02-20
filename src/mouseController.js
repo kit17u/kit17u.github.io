@@ -1,4 +1,4 @@
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+import * as THREE from 'https://unpkg.com/three@0.182.0/build/three.module.js';
 
 /**
  * Updates camera movement and holds information about mouse coordinates.

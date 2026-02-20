@@ -20,7 +20,6 @@ setTheme(getPreferredTheme());
 
 toggleButton.addEventListener('click', () => {
     const currentTheme = document.documentElement.getAttribute("data-theme");
-    console.log(currentTheme);
     const newTheme = currentTheme === "dark" ? "light" : "dark";
     setTheme(newTheme);
 });
