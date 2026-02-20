@@ -1,0 +1,111 @@
+:root{
+    color-scheme: light dark;
+    --bg  : #5175ff;
+    --text: #ffffff;
+    --link: #d1ff9d;
+    --pink: #ff88e1;
+}
+
+html[data-theme="dark"] {
+    --bg  : #1a1b20;
+    --text: #839cff;
+    --link: #ff87e1;
+    --pink: #b1ffd3;
+}
+
+html[data-theme="light"] {
+    --bg  : #5175ff;
+    --text: #ffffff;
+    --link: #d1ff9d;
+}
+
+body{
+    font-family: monospace !important;
+    color: var(--text) !important;
+    font-size: 13px !important;
+    position: absolute;
+}
+
+hr{
+    color: var(--text);
+}
+
+.link{
+    background-color: var(--link);
+    color:#0d6efd;
+    border: none;
+    text-decoration: none;
+    margin:0px;
+    padding:0px;
+}
+
+.link:hover{
+    background-color: var(--pink) !important;
+}
+
+h1, h2{
+    /*color: #9eb9cf;*/
+    font-weight: bold !important;
+    font-size: 20px !important;
+}
+
+pre{
+    line-height: normal !important;
+}
+
+.main{
+    width: 30%;
+    margin:auto
+}
+
+canvas {
+    position: fixed;
+    left: 0px;
+    top:0px;
+    z-index:-1;
+    background-color: var(--bg);
+    width: 100%;
+    height: 100%;
+}
+
+#contact{
+    position:fixed !important;
+    bottom: 0px !important;
+    width: 100%;
+    text-align: center;
+}
+
+.theme-button {
+    color: var(--text);
+    background-color: transparent;
+    border:none;
+    font-size: 36px;
+    white-space: nowrap;
+    position:relative;
+    margin:10px;
+    top:5px;
+    right:0px;
+    width: 3.5rem;
+    float:right;
+}
+.theme-button:hover{
+    top:0px;
+    color: var(--pink);
+}
+
+ .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    width: 100%;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: var(--text);
+  text-align: center;
+}
