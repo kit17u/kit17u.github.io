@@ -81,16 +81,20 @@ canvas {
     border:none;
     font-size: 36px;
     white-space: nowrap;
-    position:relative;
-    margin:10px;
-    top:5px;
-    right:0px;
     width: 3.5rem;
-    float:right;
+    top:5px;
 }
+
 .theme-button:hover{
     top:0px;
     color: var(--pink);
+}
+
+.right{
+    position:relative;
+    margin:10px;
+    right:0px;
+    float:right;
 }
 
  .center {
