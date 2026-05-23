@@ -8,7 +8,8 @@ let scene, camera, renderer, timer;
 let controls;
 let fishControllers;
 
-const modelUrls = ['../static/models/yellowtetra_anim.glb', '../static/models/neontetra_anim.glb'];
+const baseUrl = '../static/models/';
+const modelNames = ['yellowtetra_anim.glb', 'neontetra_anim.glb'];
 
 init();
 
@@ -56,7 +57,7 @@ async function init(){
      */
     controls = new MouseController( camera, document, renderer, {} );
     fishControllers = [];
-    spawnFish(30, 20, modelUrls);
+    spawnFish(30, 20, modelNames.map((name) => baseUrl+name));
 
 }
 
@@ -64,9 +65,9 @@ function spawnFish(num, maxDistance, urls){
     const gltfLoader = new GLTFLoader();
     
     for(let i=0; i<num; i++){
-        const url = urls[Math.floor(Math.random()*urls.length)];
+        // Take random url from array of urls
+        const url = urls[Math.floor(Math.random()*urls.length)]; 
         gltfLoader.load(url, (gltf) => {
-
             const fish = gltf.scene;
             const outer_fish = fish.getObjectByName('fish');
             const inner_fish = fish.getObjectByName('inner');
@@ -106,10 +107,9 @@ function spawnFish(num, maxDistance, urls){
  * Update
  */
 function animate() {
-
     timer.update();
-    const t  = timer.getElapsed()*1000;
-    const dt = timer.getDelta()*1000;
+    const t  = timer.getElapsed();
+    const dt = timer.getDelta();
 
     for (let i=0; i<fishControllers.length; i++){
         fishControllers[i].update(t, dt);
@@ -117,5 +117,4 @@ function animate() {
 
     controls.update(t, dt);
     renderer.render( scene, camera );
-
 }

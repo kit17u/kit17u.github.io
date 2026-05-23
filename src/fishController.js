@@ -6,58 +6,56 @@ import * as THREE from 'three';
  * @param fish        Root model of a fish, Object3D
  * @param controller  Instance of a MouseController
  *                    needed to get mouse position
- * @param maxDistance Maximum distance at which a fish appears,
- *                    a number
  * @param clips       Animation clips
  */
 export class FishController{
     constructor(fish, controller, clips, {speed, interval, maxDistance, followDistance, rotationSpeed}){
+        // Resources
         this.fish           = fish;
         this.controller     = controller;
         this.clips          = (typeof clips !== 'undefined') ? clips : [];
+        // Tweakable parameters
+        this.speed          = speed          ?? 0.1  + Math.random() * 0.5;
+        this.interval       = interval       ?? 2    + Math.random();
+        this.followDistance = followDistance ?? 3    + Math.random() * 5;
+        this.maxDistance    = maxDistance    ?? 20;
+        this.rotationSpeed  = rotationSpeed  ?? 0.1  + Math.random() * 0.05;
 
-        this.speed          = speed          ? speed          : 0.1  + Math.random() * 0.5;
-        this.interval       = interval       ? interval       : 2000 + Math.random() * 1000;
-        this.followDistance = followDistance ? followDistance : 3    + Math.random() * 5;
-        this.maxDistance    = maxDistance    ? maxDistance    : 20;
-        this.rotationSpeed  = rotationSpeed  ? rotationSpeed  : 0.1  + Math.random() * 0.05;
-
+        // Determines fish's behaviour state
+        this.isFollowing    = false;
+        // Variables for transformation
         this.velocity       = new THREE.Vector3(0, 0, 0);
-
-        this._targetEuler   = new THREE.Euler(1, 0, 0, "YZX");
+        // Variables for rotation
         this._targetQuat    = new THREE.Quaternion();
-        this.vectorForward  = new THREE.Vector3(1, 0, 0);
-        this.vectorUp       = new THREE.Vector3(0, 1, 0);
         this.zAxis          = new THREE.Vector3();
         this.yAxis          = new THREE.Vector3();
         this.matrix         = new THREE.Matrix4();
-        
-        this.mixer          = new THREE.AnimationMixer( fish );
-        this.isFollowing    = false;
+        this.vectorForward = new THREE.Vector3(1, 0, 0); // Axis representing model's forward direction
+        this.vectorUp       = new THREE.Vector3(0, 1, 0);
+        this.fish.rotation.order = 'YXZ';
 
-        const swim          = clips[0];
-        const swimLoop      = clips[1];
-        this.actionSwim     = this.mixer.clipAction( swim );
-        this.actionSwim.loop= THREE.LoopOnce;
+        // Animations
+        const swim     = clips[0];
+        const swimLoop = clips[1];
+        this.mixer     = new THREE.AnimationMixer( fish );
+
+        this.actionSwim = this.mixer.clipAction( swim );
+        this.actionSwim.loop = THREE.LoopOnce;
         this.actionSwim.clampWhenFinished = true;
         this.actionSwim.setDuration(this.interval);
         this.actionSwim.play();
 
         this.actionSwimLoop = this.mixer.clipAction( swimLoop );
-        this.actionSwimLoop.timeScale = 0.0001+ Math.random()*0.001;
-        this.fish.rotation.order = 'YXZ';
+        this.actionSwimLoop.timeScale = 0.1+ Math.random();
     }
 
     update(t, dt){
-
         // Animatoin update
         this.mixer.update(dt);
-
         // Position/rotation update
         this.updateVelocity(t);
         this.updatePosition(dt);
         this.rotate();
-
     }
     
     distanceToTarget(){
@@ -71,13 +69,7 @@ export class FishController{
     }
 
     updateVelocity(t){
-        const target = this.controller.targetPoint;
-        const current = this.fish.position;
-
-        // Returns euclidean distance
-        const d = Math.sqrt( (target.x - current.x)**2 
-                           + (target.y - current.y)**2 
-                           + (target.z - current.z)**2)
+        const d = this.distanceToTarget();
 
         /**
          * Default behaviour
@@ -93,9 +85,9 @@ export class FishController{
             let swim = t % this.interval;
 
             // Update position
-            this.velocity.set( this.speed*0.01
+            this.velocity.set( this.speed*10
                                * (1-Math.sqrt(( swim / this.interval )))**2 
-                               + 0.0001, 
+                               + 1, 
                                0, 0);
 
             // Play swim animation once in an interval
@@ -118,16 +110,18 @@ export class FishController{
 
             // Change animation speed based on distance
             this.actionSwimLoop.timeScale = this.speed * d**1.2
-                                            *( 0.0002  + Math.random() * 0.0001 ) 
-                                            +  0.00001 + Math.random() * 0.0002;
+                                            *( 0.2  + Math.random() * 0.1 ) 
+                                            +  0.01 + Math.random() * 0.2;
 
+            const target = this.controller.targetPoint;
+            const current = this.fish.position;
             // Update position
             const dx = target.x - current.x;
             const dy = target.y - current.y;
             const dz = target.z - current.z;
             this.velocity.set(dx, dy, dz);
             this.velocity.normalize();
-            this.velocity.multiplyScalar(this.speed*d**1.2*0.0005);
+            this.velocity.multiplyScalar(this.speed*d**1.2*0.5);
 
         }
     }
@@ -148,13 +142,11 @@ export class FishController{
         let xAxis = this.velocity.clone().normalize();
         if (xAxis.lengthSq() === 0) return;
 
-        const worldUp = this.vectorUp;
-
         // First compute Z perpendicular to X and worldUp
-        let zAxis = this.zAxis.crossVectors(xAxis, worldUp);
+        let zAxis = this.zAxis.crossVectors(xAxis, this.vectorUp);
 
         if (zAxis.lengthSq() === 0) {
-            // forward parallel to up → choose fallback axis
+            // forward parallel to up -> choose fallback axis
             zAxis.set(0, 0, 1);
         }
 
