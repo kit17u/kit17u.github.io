@@ -33,7 +33,7 @@ export class MouseController{
         this.camPoint             = new THREE.Vector3(0, 0, 5);
         
         // Tracks mouse inactivity to ignore it if >coolDownTime
-        this.coolDownTime         = 5000; //ms
+        this.coolDownTime         = 5;
         this.mouseInactivityTime  = 0;
 
         // Initialize controls
